@@ -1,0 +1,74 @@
+You are building an MVP Telegram Mini App for the lapochka lemonade brand
+with a team of 6 design students in ONE day.
+
+SOURCE OF TRUTH:
+- product_book.md is the single source of truth (V3 template, §0–§17).
+- workshop.md is the process playbook. Follow its phases and layers.
+- Always read product_book.md before writing or modifying code. Follow:
+  * platforms & roles (§7, §7.4 — Telegram Mini App = primary, Web admin = companion)
+  * user stories (§8), screens (§9), data model + RLS (§10)
+  * tech stack (§11), auth method (§11.3 — Telegram initData), env vars (§11.4)
+  * design spec (§12 — yellow #F5C842, orange #FF6B35, cream #FFFDF0), MVP scope (§13 Must Have only)
+- If product_book.md and a prompt conflict — ask before proceeding.
+
+PROJECT STACK (from §11.2):
+- Primary platform: Telegram Mini App
+  React + Vite + TypeScript + Tailwind CSS + @telegram-apps/sdk
+- Companion platform: Web admin panel
+  React + Vite + TypeScript + Tailwind CSS + shadcn/ui
+- Backend: Supabase (PostgreSQL + Auth + Storage + Edge Functions)
+- Deploy: Cloudflare Pages (RF-friendly; Vercel needs SMS — avoid)
+
+DEFAULT STACK (gravity — deviate only if §11 explicitly says so):
+- Frontend: React + Vite + TypeScript + Tailwind CSS
+- Backend: Supabase (PostgreSQL + Auth + Storage + Edge Functions)
+- Deploy: Cloudflare Pages
+- Telegram: @telegram-apps/sdk for Mini App context and initData auth
+
+NON-NEGOTIABLE:
+- All Supabase calls go through a single client in src/lib/supabase.ts.
+- Auth is via Telegram initData (validate in Supabase Edge Function or RLS policy).
+- RLS must be enabled on every user-data table before deploy.
+- Secrets only in .env.local (gitignored). Never hardcode keys.
+- No npm packages beyond §11.2 without explicit approval.
+- ONE DAY scope: only §13 Must Have. Suggest Should Have for "after workshop".
+- Touch targets ≥ 44pt (mobile-first, Telegram Mini App runs on phones).
+
+DESIGN (from §12):
+- Primary color: #F5C842 (lapochka yellow)
+- Accent color: #FF6B35 (orange)
+- Background: #FFFDF0 (warm cream)
+- Text: #1A1A1A
+- Font: Nunito or Inter (rounded feel)
+- Tone: friendly, playful, like a real person wrote it. No corporate stiffness.
+- Icons: lucide-react + paw emoji (🐾) for "Lapochki" points
+- All UI text in Russian.
+
+TELEGRAM MINI APP SPECIFICS:
+- Use @telegram-apps/sdk to read initData (user.id, user.first_name, user.username, user.photo_url).
+- Pass initData to Supabase Edge Function for server-side validation and user upsert.
+- No email/password auth — Telegram user is the identity.
+- Use window.Telegram.WebApp.expand() on mount to use full screen.
+- Use window.Telegram.WebApp.BackButton for navigation back.
+- Respect Telegram theme params (colorScheme, backgroundColor) where possible.
+- env vars: VITE_SUPABASE_URL, VITE_SUPABASE_ANON_KEY, VITE_TELEGRAM_BOT_TOKEN
+
+STRUCTURE:
+- src/pages/         — one file per screen from §9
+- src/components/    — reusable UI components
+- src/lib/           — supabase.ts (client), database.types.ts (generated types), telegram.ts
+- src/hooks/         — useAuth.ts (Telegram initData auth), useCollection.ts, etc.
+
+TEAM MODE:
+- Repo: alinagolubeva1518/Lapochka, shared by 6 people.
+- Small commits after every milestone (layer 3.x).
+- One file — one owner at a time. Parallel work in separate folders/branches.
+- Second/third Cursor chats MUST start with @product_book.md @.cursorrules.
+
+CODE STYLE:
+- Show a diff before replacing working code.
+- Prefer components from Tailwind + shadcn/ui over custom CSS.
+- Local state via useState/useEffect; no Redux/Zustand unless listed in §11.2.
+- Env vars follow VITE_* convention.
+- All user-facing strings in Russian.
+- No comments that just restate what the code does.
