@@ -14,18 +14,19 @@ export type AppUser = {
 export function useAuth() {
   const [user, setUser] = useState<AppUser | null>(null)
   const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
     async function init() {
-      // Give Telegram WebApp script time to inject initData
       await new Promise((r) => setTimeout(r, 300))
       const tgUser = getTelegramUser()
       if (!tgUser) {
+        setError('no_telegram_user')
         setLoading(false)
         return
       }
 
-      const { data, error } = await supabase
+      const { data, error: sbError } = await supabase
         .from('users')
         .upsert(
           {
@@ -39,7 +40,9 @@ export function useAuth() {
         .select()
         .single()
 
-      if (!error && data) {
+      if (sbError) {
+        setError(sbError.message)
+      } else if (data) {
         setUser(data as AppUser)
       }
       setLoading(false)
@@ -48,5 +51,5 @@ export function useAuth() {
     init()
   }, [])
 
-  return { user, loading }
+  return { user, loading, error }
 }

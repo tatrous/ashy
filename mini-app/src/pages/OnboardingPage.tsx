@@ -1,7 +1,9 @@
+import { useAuth } from '../hooks/useAuth'
+
 export default function OnboardingPage() {
+  const { error } = useAuth()
   const tg = typeof window !== 'undefined' ? window.Telegram?.WebApp : undefined
-  const user = tg?.initDataUnsafe?.user
-  const hasInitData = Boolean(tg?.initData)
+  const tgUser = tg?.initDataUnsafe?.user
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-lapochka-cream px-6 text-center">
@@ -17,8 +19,8 @@ export default function OnboardingPage() {
       </p>
       <div className="bg-white/70 rounded-2xl p-4 text-left text-xs text-gray-500 w-full max-w-sm">
         <p>WebApp: {tg ? '✅' : '❌'}</p>
-        <p>initData: {hasInitData ? '✅' : '❌'}</p>
-        <p>user: {user ? `✅ ${user.first_name}` : '❌ null'}</p>
+        <p>user: {tgUser ? `✅ ${tgUser.first_name}` : '❌ null'}</p>
+        <p>supabase: {error ? `❌ ${error}` : '⏳'}</p>
       </div>
     </div>
   )
