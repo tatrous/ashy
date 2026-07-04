@@ -17,6 +17,8 @@ export function useAuth() {
 
   useEffect(() => {
     async function init() {
+      // Give Telegram WebApp script time to inject initData
+      await new Promise((r) => setTimeout(r, 300))
       const tgUser = getTelegramUser()
       if (!tgUser) {
         setLoading(false)

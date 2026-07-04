@@ -28,16 +28,18 @@ declare global {
   }
 }
 
-export const tg = typeof window !== 'undefined' ? window.Telegram?.WebApp : null
+function getWebApp() {
+  return typeof window !== 'undefined' ? window.Telegram?.WebApp : undefined
+}
 
 export function getTelegramUser() {
-  return tg?.initDataUnsafe?.user ?? null
+  return getWebApp()?.initDataUnsafe?.user ?? null
 }
 
 export function expandApp() {
-  tg?.expand()
+  getWebApp()?.expand()
 }
 
 export function markReady() {
-  tg?.ready()
+  getWebApp()?.ready()
 }
